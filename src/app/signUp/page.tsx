@@ -15,6 +15,7 @@ import { useMutation } from 'react-query';
 import { toast } from 'react-hot-toast';
 import postSignUpData from '../../../api/auth';
 import { useRouter } from 'next/navigation';
+import ProgressAuth from '@/component/progressAuth';
 const SignUp = () => {
   const router = useRouter();
   const { setUser ,user } = useUserStore();
@@ -26,7 +27,6 @@ const SignUp = () => {
     confirmPassword: ''
   });
   const [isValid, setIsValid] = useState<boolean>(false);
-
   const [profile, setProfile] = useState({
     firstname: "",
     lastname: "",
@@ -35,25 +35,6 @@ const SignUp = () => {
     confirmpassword: "",
     user: "client"
   })
-  
-  const { mutateAsync, isLoading } = useMutation(postSignUpData, {
-    onSuccess: (data) => {
-      if (data.token) {
-        localStorage.setItem('token', data.token)
-        toast.success('Sign-up successful!')
-        if (typeof window !== 'undefined' && router) {
-          router.push('/landingPage');
-        }
-      } else {
-        toast.error('No token received from server')
-      }
-    },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to sign up')
-      setShowModal(false);
-    },
-  });
-
   const [showModal, setShowModal] = useState(false);
   const handleSignUp = () => {
     if (isValid) {
@@ -63,26 +44,9 @@ const SignUp = () => {
         full_name: `${profile.firstname} ${profile.lastname}`,
         role: profile.user,
         email_verified: false,
-      };
-      
-      setUser(signUpData);
-      setShowModal(true);
-    }
-  };
-  const handleSkip = async () => {
-    try {
-      if (!user) {
-        toast.error('User data not found');
-        return;
       }
-      
-      await mutateAsync(user);
-    } catch (error) {
-      console.error('Error during sign-up:', error);
-      toast.error('Failed to complete signup');
-    }
-  };
-
+      setUser(signUpData)
+      setShowModal(true)}}
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
@@ -90,8 +54,7 @@ const SignUp = () => {
       return false
     }
     setErrors(prev => ({ ...prev, email: '' }))
-    return true
-  }
+    return true}
   const validatePassword = (password: string) => {
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
     if (!passwordRegex.test(password)) {
@@ -99,11 +62,9 @@ const SignUp = () => {
         ...prev, 
         password: 'Password must be at least 8 characters long and contain both letters and numbers' 
       }))
-      return false
-    }
+      return false}
     setErrors(prev => ({ ...prev, password: '' }))
-    return true;
-  };
+    return true}
   const validateConfirmPassword = (password: string, confirmPassword: string) => {
     if (password !== confirmPassword) {
       setErrors(prev => ({ ...prev, confirmPassword: 'Passwords do not match' }))
@@ -289,28 +250,7 @@ const SignUp = () => {
           </div>
         </div>
       </div>
-      <div className={`absolute ${showModal ? 'flex opacity-100' : 'hidden opacity-0'}transition-opacity duration-300 ease-in-out bg-[rgba(255,255,255,0.5)] w-full h-full justify-center items-center${showModal ? 'opacity-100' : 'opacity-0'}`}>
-        <div className='w-[520px] flex justify-center items-center h-[340px] bg-white shadow-custom-shadow rounded-xl'>
-          <div className='w-4/5 h-4/5 flex justify-center flex-col'>
-            <div className='flex gap-x-0 mb-0 items-center'>
-              <div className='text-[rgba(96,95,95,1)] text-3xl font-bold'>Congrats</div>
-              <div><Image alt='' src={img2} /></div>
-          </div>
-          <div className='w-full flex items-center justify-end text-sm text-[rgba(0,167,157,1)] '>Profile</div>
-          <div className='text-sm text-[rgba(0,167,157,1)] mb-2'>20%</div>
-            <div className='bg-[rgba(226,226,226,0.22)] rounded-3xl h-8 w-full mb-4'>
-              <div className='bg-[rgba(0,167,157,0.68)] w-1/5 rounded-3xl h-full'></div>
-            </div>
-            <div className='text-[rgba(114,114,114,1)] font-thin text-xs mb-4'>Now you are one of aus, we want to know more about you</div>
-            <div className='bg-[rgba(0,167,157,1)] text-white p-4 rounded-lg flex items-center justify-center mb-3 cursor-pointer'>
-              <Link href={'/setup'}>Setup your profile</Link>
-            </div>
-            <div className='text-[rgba(0,167,157,1)] font-thin text-xs cursor-pointer flex w-full items-center justify-end'>
-              <Link href="/landingPage"  onClick={handleSkip} >skip for now</Link>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ProgressAuth skip={false} showModal={showModal} setShowModal={setShowModal} progress={profile.user == "artisan" ? 20 : 50}></ProgressAuth>
     </div>
   )}
 export default SignUp;
