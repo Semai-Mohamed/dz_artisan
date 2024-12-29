@@ -2,7 +2,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { User } from "../utils/authStore"
 const postSignUpData = async (userData: User) => {
-    const response = await fetch(`http://localhost:3001/user/signup`, { //env
+    const response = await fetch(`http://localhost:3000/user/signup`, { 
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -20,9 +20,10 @@ export default postSignUpData
 
 export const googleAuth = async (token: string) => {
     try {
-      const response = await axios.post(`http://localhost:3001/user/google/callback`, { token });
+      const response = await axios.post(`http://localhost:3000/user/google/callback`, { token });
   
       if (response.data.success) {
+        
         toast.success('Login successful!');
         localStorage.setItem('token', response.data.token); // Store the JWT token locally
         return response.data; // Return data for further processing

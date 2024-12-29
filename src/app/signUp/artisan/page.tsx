@@ -9,14 +9,16 @@ import img5 from "../../../../public/images/x.svg"
 import img6 from "../../../../public/images/Upload icon.svg"
 import img7 from "../../../../public/images/Group 2393.svg"
 import Link from "next/link";
-import { useUserStore } from "../../../../utils/authStore";
+import {User, useUserStore } from "../../../../utils/authStore";
+import ConditionalRedirect from "@/component/verify";
 const Setup = () => {
   const [email,setEmail] = useState<boolean>(false)
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [birthday, setBirthday] = useState({ day: '', month: '', year: '' });
   const [errors, setErrors] = useState({ username: '', about: '', year: '' });
-  const { setUser ,user } = useUserStore();
+  const verifyKeys: Array<keyof User> = ['username', 'bio','birthday','profile_picture',"employment_status"];
+  const { user } = useUserStore();
   console.log(user)
   const [profile, setProfile] = useState({
     username: "",
@@ -50,6 +52,7 @@ const Setup = () => {
     }};
   return (
     <div className="w-full flex justify-center items-center h-[700px] font-Poppins">
+      <ConditionalRedirect user={user} url="/signUp" verify={verifyKeys}></ConditionalRedirect>
       <div className="w-[88%] h-[650px]">
         <div className="flex w-full items-center justify-end">
           <Image alt="" src={img3} />

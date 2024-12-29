@@ -3,7 +3,6 @@ import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link'; 
 import Image from "next/image";
 import img1 from '../../../public/images/7309682.svg'
-import img2 from '../../../public/images/trophy-dynamic-color.svg'
 import img3 from '../../../public/images/Subtract.svg'
 import img5 from '../../../public/images/Vector (2).svg'
 import img6 from '../../../public/images/flat-color-icons_google.svg'
@@ -11,14 +10,11 @@ import img7 from '../../../public/images/ant-design_apple-filled.svg'
 import { useUserStore } from '../../../utils/authStore';
 import { User } from '../../../utils/authStore';
 import { useEffect, useState } from "react";
-import { useMutation } from 'react-query';
-import { toast } from 'react-hot-toast';
-import postSignUpData from '../../../api/auth';
 import { useRouter } from 'next/navigation';
 import ProgressAuth from '@/component/progressAuth';
 const SignUp = () => {
   const router = useRouter();
-  const { setUser ,user } = useUserStore();
+  const { setUser ,user, updateMultipleFields } = useUserStore();
   const [showPassword, setShowPassword] = useState<boolean>(false)
   const [chose, setChose] = useState<string>('client');
   const [errors, setErrors] = useState({
@@ -26,7 +22,7 @@ const SignUp = () => {
     password: '',
     confirmPassword: ''
   });
-  const [isValid, setIsValid] = useState<boolean>(false);
+  const [isValid, setIsValid] = useState<boolean | string>(false);
   const [profile, setProfile] = useState({
     firstname: "",
     lastname: "",
@@ -38,14 +34,14 @@ const SignUp = () => {
   const [showModal, setShowModal] = useState(false);
   const handleSignUp = () => {
     if (isValid) {
-      const signUpData: User = {
+      const signUpData= {
         email: profile.Email,
         password: profile.password,
         full_name: `${profile.firstname} ${profile.lastname}`,
         role: profile.user,
         email_verified: false,
       }
-      setUser(signUpData)
+      updateMultipleFields(signUpData)
       setShowModal(true)}}
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -56,11 +52,11 @@ const SignUp = () => {
     setErrors(prev => ({ ...prev, email: '' }))
     return true}
   const validatePassword = (password: string) => {
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/
     if (!passwordRegex.test(password)) {
       setErrors(prev => ({ 
         ...prev, 
-        password: 'Password must be at least 8 characters long and contain both letters and numbers' 
+        password: 'Password must be at least 8 characters long and contain 1 uppercase and lowercase and special character ' 
       }))
       return false}
     setErrors(prev => ({ ...prev, password: '' }))
@@ -103,7 +99,7 @@ const SignUp = () => {
   }, [chose]);
 
   useEffect(() => {
-    const isValidForm : boolean =
+    const isValidForm :string| boolean =
        (
       profile.firstname &&
       profile.lastname &&
@@ -165,7 +161,7 @@ const SignUp = () => {
               </div>
             </div>
             <div className="mb-5 flex flex-col gap-y-2 relative w-11/12">
-              <label className="text-[rgba(114,114,114,0.7)] pl-2 font-semibold">Password</label>
+              <label className="text-[hsla(0,0%,45%,1)] pl-2 font-semibold">Password</label>
               <div className="relative w-full">
                 <input
                   value={profile.password}
@@ -179,7 +175,7 @@ const SignUp = () => {
                 <button
                   type="button"
                   onClick={handleTogglePassword}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500">
+                  className={`absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 ${errors.password ? "top-[30.5%]" :""}`}>
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
                 {errors.password && <div className="text-red-500 text-xs mt-1">{errors.password}</div>}
@@ -250,7 +246,7 @@ const SignUp = () => {
           </div>
         </div>
       </div>
-      <ProgressAuth skip={false} showModal={showModal} setShowModal={setShowModal} progress={profile.user == "artisan" ? 20 : 50}></ProgressAuth>
+      <ProgressAuth urlClient='/signUp/setup' urlArtisan='/signUp/setup' skip={false} showModal={showModal} setShowModal={setShowModal} progress={profile.user == "artisan" ? 20 : 50}></ProgressAuth>
     </div>
   )}
 export default SignUp;

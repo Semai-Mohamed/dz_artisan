@@ -13,28 +13,24 @@ interface ChildComponentProps {
     showModal : boolean
     progress : number
     setShowModal :React.Dispatch<React.SetStateAction<boolean>>
+    urlArtisan : string;
+    urlClient : string
   }
 
-const ProgressAuth : React.FC<ChildComponentProps> = ({ skip ,progress,showModal,setShowModal}) => {
-    console.log(skip,progress,showModal)
+const ProgressAuth : React.FC<ChildComponentProps> = ({ skip ,progress,showModal,setShowModal,urlArtisan , urlClient}) => {
     const router = useRouter()
       const { user } = useUserStore();
     const { mutateAsync, isLoading } = useMutation(postSignUpData, {
         onSuccess: (data) => {
-          if (data.token) {
-            localStorage.setItem('token', data.token)
-            toast.success('Sign-up successful!')
-            if (typeof window !== 'undefined' && router) {
-              router.push('/landingPage');
-            }
-          } else {
-            toast.error('No token received from server')
-          }
-        },
-        onError: (error: any) => {
-          toast.error(error.message || 'Failed to sign up')
-          setShowModal(false);
-        },
+              toast.success('Sign-up successful!')
+              if (typeof window !== 'undefined' && router) {
+                router.push('/landingPage');
+              }   
+          },
+          onError: (error: any) => {
+            toast.error(error.message || 'Failed to sign up')
+            setShowModal(false);
+          },
       });
       const handleSkip = async () => {
         try {
@@ -72,7 +68,7 @@ const ProgressAuth : React.FC<ChildComponentProps> = ({ skip ,progress,showModal
       alignItems: 'center',
       height: '340px',
       backgroundColor: 'white',
-      boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)', // Assuming shadow-custom-shadow is similar to this
+      boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)', 
       borderRadius: '16px'
     }}
   >
@@ -96,7 +92,7 @@ const ProgressAuth : React.FC<ChildComponentProps> = ({ skip ,progress,showModal
         <div 
           style={{
             color: 'rgba(96, 95, 95, 1)',
-            fontSize: '1.875rem', // 3xl in Tailwind
+            fontSize: '1.875rem',
             fontWeight: '700'
           }}
         >
@@ -111,7 +107,7 @@ const ProgressAuth : React.FC<ChildComponentProps> = ({ skip ,progress,showModal
           width: '100%',
           display: 'flex',
           justifyContent: 'flex-end',
-          fontSize: '0.875rem', // text-sm in Tailwind
+          fontSize: '0.875rem', 
           color: 'rgba(0, 167, 157, 1)'
         }}
       >
@@ -119,7 +115,7 @@ const ProgressAuth : React.FC<ChildComponentProps> = ({ skip ,progress,showModal
       </div>
       <div 
         style={{
-          fontSize: '0.875rem', // text-sm in Tailwind
+          fontSize: '0.875rem', 
           color: 'rgba(0, 167, 157, 1)',
           marginBottom: '0.5rem'
         }}
@@ -129,7 +125,7 @@ const ProgressAuth : React.FC<ChildComponentProps> = ({ skip ,progress,showModal
       <div 
         style={{
           backgroundColor: 'rgba(226, 226, 226, 0.22)',
-          borderRadius: '1.5rem', // rounded-3xl in Tailwind
+          borderRadius: '1.5rem', 
           height: '32px',
           width: '100%',
           marginBottom: '1rem'
@@ -147,12 +143,12 @@ const ProgressAuth : React.FC<ChildComponentProps> = ({ skip ,progress,showModal
       <div 
         style={{
           color: 'rgba(114, 114, 114, 1)',
-          fontWeight: '100', // font-thin in Tailwind
-          fontSize: '0.75rem', // text-xs in Tailwind
+          fontWeight: '100', 
+          fontSize: '0.75rem',
           marginBottom: '1rem'
         }}
       >
-        Now you are one of us, we want to know more about you
+        {progress == 100 ? <div>Congratulations, now you are one of us. All that remains is confirmation</div> : <div>we want to know more about you</div>}
       </div>
       <div 
         style={{
@@ -167,7 +163,7 @@ const ProgressAuth : React.FC<ChildComponentProps> = ({ skip ,progress,showModal
           cursor: 'pointer'
         }}
       >
-        <Link href={'/setup'}>Setup your profile</Link>
+        <div >{progress == 100 ? <Link href={"/loginUp"} onClick={handleSkip}>register your information</Link>: <Link href={user?.role == "artisan" ? urlArtisan : urlClient}>Complete Setup your profile</Link>}</div>
       </div>
       <div 
         style={{
@@ -181,7 +177,7 @@ const ProgressAuth : React.FC<ChildComponentProps> = ({ skip ,progress,showModal
         }}
       >
         <Link 
-          href={user?.role === "artisan" ? "/signUp/artisan" : "/landingpage"} 
+          href={user?.role === "artisan" ? "/signUp/artisan" : "/loginUp"} 
           onClick={handleSkip}
         >
           skip for now

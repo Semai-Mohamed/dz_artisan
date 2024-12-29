@@ -7,16 +7,19 @@ import img2 from "../../../../public/images/!.svg"
 import img3 from "../../../../public/images/Subtract.svg"
 import img4 from "../../../../public/images/Component Placeholder Image.svg"
 import img5 from "../../../../public/images/x.svg"
-import { useUserStore } from '../../../../utils/authStore';
+import { useUserStore , User } from '../../../../utils/authStore';
 import Link from "next/link"
+import ConditionalRedirect from "@/component/verify"
+import ProgressAuth from "@/component/progressAuth"
 const Setup = () => {
   const [email,setEmail] = useState<boolean>(false)
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [birthday, setBirthday] = useState({ day: '', month: '', year: '' });
   const [errors, setErrors] = useState({ username: '', about: '', year: '' });
-  const { setUser ,user,updateMultipleFields } = useUserStore();
-  
+  const { user,updateMultipleFields } = useUserStore();
+  const verifyKeys: Array<keyof User> = ['email', 'password','full_name','role'];
+  const [showModel , setShowModel]  = useState<boolean>(false)
   const [profile, setProfile] = useState({
     username: "",
     about: "",
@@ -132,6 +135,7 @@ const Setup = () => {
   };
   return (
     <div className="w-full flex justify-center items-center h-[700px] font-Poppins">
+      <ConditionalRedirect user={user} url="/signUp" verify={verifyKeys}></ConditionalRedirect>
       <div className="w-[88%] h-[650px]">
         <div className="flex w-full items-center justify-end">
           <Image alt="" src={img3} />
@@ -245,7 +249,7 @@ const Setup = () => {
                 <button onClick={handleSubmit}
         className={`bg-[rgba(0,167,157,1)] rounded-lg p-3 text-white ${!isValidForm() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
         disabled={!isValidForm()}>
-            <Link  href={user?.role === 'artisan' ? '/signUp/artisan' : '/landingPage'}>save </Link> </button>
+            <div onClick={()=>setShowModel(true)}>save </div> </button>
                 </div>
               </div>
             </div>
@@ -272,5 +276,7 @@ const Setup = () => {
       </div>
     </div>
         </div>
+        <ProgressAuth urlArtisan="signUp/artisan" urlClient="/loginUp" skip={true} showModal={showModel} setShowModal={setShowModel} progress={user?.role == "artisan" ? 40 : 100}></ProgressAuth>
+
       </div>)}
 export default Setup
