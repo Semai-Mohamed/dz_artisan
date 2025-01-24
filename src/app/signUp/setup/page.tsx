@@ -17,7 +17,7 @@ const Setup = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [birthday, setBirthday] = useState({ day: '', month: '', year: '' });
   const [errors, setErrors] = useState({ username: '', about: '', year: '' });
-  const { user,updateMultipleFields } = useUserStore();
+  const {user,updateMultipleFields } = useUserStore();
   const verifyKeys: Array<keyof User> = ['email', 'password','full_name','role'];
   const [showModel , setShowModel]  = useState<boolean>(false)
   const [profile, setProfile] = useState({
@@ -130,12 +130,13 @@ const Setup = () => {
         employment_status: profile.work,
         profile_picture: profile.image,
       };
-      updateMultipleFields(newUser);   
+      updateMultipleFields(newUser);  
+      console.log(user)
     }
   };
   return (
     <div className="w-full flex justify-center items-center h-[700px] font-Poppins">
-      <ConditionalRedirect user={user} url="/signUp" verify={verifyKeys}></ConditionalRedirect>
+      <ConditionalRedirect  url="/signUp" verify={verifyKeys}></ConditionalRedirect>
       <div className="w-[88%] h-[650px]">
         <div className="flex w-full items-center justify-end">
           <Image alt="" src={img3} />
@@ -276,7 +277,7 @@ const Setup = () => {
       </div>
     </div>
         </div>
-        <ProgressAuth urlArtisan="signUp/artisan" urlClient="/loginUp" skip={true} showModal={showModel} setShowModal={setShowModel} progress={user?.role == "artisan" ? 40 : 100}></ProgressAuth>
+        <ProgressAuth urlArtisan="/signUp/artisan" urlClient="/logIn" skip={true} showModal={showModel} setShowModal={setShowModel} progress={user?.role == "artisan" ? 40 : 100}></ProgressAuth>
 
       </div>)}
 export default Setup

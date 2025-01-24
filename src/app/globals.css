@@ -6,6 +6,10 @@
   src: url('/font/Poppins-Medium.ttf');
   font-style: normal;
 }
+@font-face{
+  font-family: 'sofiFont';
+  src: url('/font/Unbounded.ttf');
+}
 .no-spinner::-webkit-inner-spin-button,
 .no-spinner::-webkit-outer-spin-button {
   -webkit-appearance: none;

@@ -11,13 +11,16 @@ import img7 from "../../../../public/images/Group 2393.svg"
 import Link from "next/link";
 import {User, useUserStore } from "../../../../utils/authStore";
 import ConditionalRedirect from "@/component/verify";
+import { useRouter } from "next/navigation";
+
 const Setup = () => {
+  const router = useRouter()
   const [email,setEmail] = useState<boolean>(false)
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [birthday, setBirthday] = useState({ day: '', month: '', year: '' });
   const [errors, setErrors] = useState({ username: '', about: '', year: '' });
-  const verifyKeys: Array<keyof User> = ['username', 'bio','birthday','profile_picture',"employment_status"];
+  const verifyKeys: Array<keyof User> = ['username', 'birthday',"employment_status","email","full_name","role"];
   const { user } = useUserStore();
   console.log(user)
   const [profile, setProfile] = useState({
@@ -50,9 +53,11 @@ const Setup = () => {
       setPreviewUrl(url);
       setProfile(prev => ({ ...prev, image: url }));
     }};
+    console.log(user)
+
   return (
     <div className="w-full flex justify-center items-center h-[700px] font-Poppins">
-      <ConditionalRedirect user={user} url="/signUp" verify={verifyKeys}></ConditionalRedirect>
+      <ConditionalRedirect  url="/signUp" verify={verifyKeys}></ConditionalRedirect>
       <div className="w-[88%] h-[650px]">
         <div className="flex w-full items-center justify-end">
           <Image alt="" src={img3} />

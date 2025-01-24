@@ -1,18 +1,16 @@
 'use client';
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { User } from '../../utils/authStore';
+import { User,useUserStore } from '../../utils/authStore';
 interface ChildComponentProps {
-  user: User | null; 
   verify: Array<keyof User>
-  url: string; 
-}
-const ConditionalRedirect: React.FC<ChildComponentProps> = ({ user, verify, url }) => {
+  url: string; }
+const ConditionalRedirect: React.FC<ChildComponentProps> = ({  verify, url }) => {
   const router = useRouter();
-
+  const {user} = useUserStore()
   useEffect(() => {
     if (!user) {
-        router.push(url); 
+        console.log("Waiting for user data...");
         return;
       }
     for (const key of verify) {
@@ -22,8 +20,6 @@ const ConditionalRedirect: React.FC<ChildComponentProps> = ({ user, verify, url 
       }
     }
   }, [user, verify, url, router]);
-
   return null; 
 };
-
 export default ConditionalRedirect;

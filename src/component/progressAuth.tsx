@@ -5,187 +5,119 @@ import img2 from '../../public/images/trophy-dynamic-color.svg'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { useMutation } from 'react-query'
-import postSignUpData from '../../api/auth'
+import postSignUpData, { SignUpResponse } from '../../api/auth'
 import { useRouter } from 'next/navigation'
 import { useUserStore } from '../../utils/authStore'
 interface ChildComponentProps {
-    skip: boolean; 
-    showModal : boolean
-    progress : number
-    setShowModal :React.Dispatch<React.SetStateAction<boolean>>
-    urlArtisan : string;
-    urlClient : string
-  }
-
-const ProgressAuth : React.FC<ChildComponentProps> = ({ skip ,progress,showModal,setShowModal,urlArtisan , urlClient}) => {
-    const router = useRouter()
-      const { user } = useUserStore();
-    const { mutateAsync, isLoading } = useMutation(postSignUpData, {
-        onSuccess: (data) => {
-              toast.success('Sign-up successful!')
-              if (typeof window !== 'undefined' && router) {
-                router.push('/landingPage');
-              }   
-          },
-          onError: (error: any) => {
-            toast.error(error.message || 'Failed to sign up')
-            setShowModal(false);
-          },
-      });
-      const handleSkip = async () => {
-        try {
-          if (!user) {
-            toast.error('User data not found');
-            return;
-          }
-          console.log(user)
-          await mutateAsync(user);
-        } catch (error) {
-          console.error('Error during sign-up:', error);
-          toast.error('Failed to complete signup');
+  skip: boolean;
+  progress: number;
+  showModal: boolean;
+  setShowModal: (show: boolean) => void;
+  urlArtisan: string;
+  urlClient: string;
+}
+const ProgressAuth: React.FC<ChildComponentProps> = ({ 
+  skip, 
+  progress, 
+  showModal, 
+  setShowModal, 
+  urlArtisan, 
+  urlClient }) => {
+  const router = useRouter();
+  const [signUpSuccess, setSignUpSuccess] = useState(false);
+  const { user } = useUserStore();
+  const { mutateAsync, isLoading } = useMutation({
+    mutationFn: postSignUpData,
+    onSuccess: (response: SignUpResponse) => {
+      if (response.success) {
+        setSignUpSuccess(true);
+        toast.success('Sign-up successful!');
+        if (typeof window !== 'undefined') {
+          router.push('/landingPage');
         }
-      };
+      } else {
+        if (response.message.includes('already exists')) {
+          toast.error('This email is already registered. Please try logging in.');
+        } else {
+          toast.error(response.message);
+        }
+        setShowModal(false);
+      }},
+    onError: () => {
+      toast.error('Network error. Please try again.');
+      setShowModal(false);
+    },
+  })
+  const handleSkip = async () => {
+    if (!user) {
+      toast.error('User data not found');
+      return;
+    }
+    try {
+      const response = await mutateAsync(user); 
+      if (response.success) {
+        setSignUpSuccess(true);
+        router.push('/logIn');
+      }} 
+    catch (error) {
+      toast.error('Failed to complete signup');
+    }
+  };
   return (
     <div 
-  className={`absolute ${showModal ? 'flex opacity-100' : 'hidden opacity-0'} transition-opacity duration-300 ease-in-out bg-[rgba(255,255,255,0.5)] w-full h-full justify-center items-center ${showModal ? 'opacity-100' : 'opacity-0'}`}
-  style={{
-    position: 'absolute',
-    display: showModal ? 'flex' : 'none',
-    opacity: showModal ? 1 : 0,
-    transition: 'opacity 300ms ease-in-out',
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center'
-  }}
->
-  <div 
-    style={{
-      width: '520px',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      height: '340px',
-      backgroundColor: 'white',
-      boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)', 
-      borderRadius: '16px'
-    }}
+    className={`absolute w-full h-full flex justify-center items-center bg-[rgba(255,255,255,0.5)] transition-opacity duration-300 ease-in-out ${showModal ? 'opacity-100 flex' : 'opacity-0 hidden'}`}
   >
-    <div 
-      style={{
-        width: '80%',
-        height: '80%',
-        display: 'flex',
-        justifyContent: 'center',
-        flexDirection: 'column'
-      }}
-    >
-      <div 
-        style={{
-          display: 'flex',
-          gap: '0',
-          marginBottom: '0',
-          alignItems: 'center'
-        }}
-      >
-        <div 
-          style={{
-            color: 'rgba(96, 95, 95, 1)',
-            fontSize: '1.875rem',
-            fontWeight: '700'
-          }}
-        >
-          Congrats
+    <div className="w-[520px] h-[340px] flex justify-center items-center bg-white shadow-md rounded-2xl">
+      <div className="w-4/5 h-4/5 flex justify-center flex-col">
+        <div className="flex gap-0 mb-0 items-center">
+          <div className="text-[#605F5F] text-[1.875rem] font-bold">
+            Congrats
+          </div>
+          <div>
+            <Image alt='' src={img2} />
+          </div>
         </div>
-        <div>
-          <Image alt='' src={img2} />
+        <div className="w-full flex justify-end text-sm text-[#00A79D]">
+          Profile
         </div>
-      </div>
-      <div 
-        style={{
-          width: '100%',
-          display: 'flex',
-          justifyContent: 'flex-end',
-          fontSize: '0.875rem', 
-          color: 'rgba(0, 167, 157, 1)'
-        }}
-      >
-        Profile
-      </div>
-      <div 
-        style={{
-          fontSize: '0.875rem', 
-          color: 'rgba(0, 167, 157, 1)',
-          marginBottom: '0.5rem'
-        }}
-      >
-        {progress}%
-      </div>
-      <div 
-        style={{
-          backgroundColor: 'rgba(226, 226, 226, 0.22)',
-          borderRadius: '1.5rem', 
-          height: '32px',
-          width: '100%',
-          marginBottom: '1rem'
-        }}
-      >
-        <div 
-          style={{
-            backgroundColor: 'rgba(0, 167, 157, 0.68)',
-            borderRadius: '1.5rem',
-            height: '100%',
-            width: `${progress}%`
-          }}
-        ></div>
-      </div>
-      <div 
-        style={{
-          color: 'rgba(114, 114, 114, 1)',
-          fontWeight: '100', 
-          fontSize: '0.75rem',
-          marginBottom: '1rem'
-        }}
-      >
-        {progress == 100 ? <div>Congratulations, now you are one of us. All that remains is confirmation</div> : <div>we want to know more about you</div>}
-      </div>
-      <div 
-        style={{
-          backgroundColor: 'rgba(0, 167, 157, 1)',
-          color: 'white',
-          padding: '1rem',
-          borderRadius: '0.5rem',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginBottom: '0.75rem',
-          cursor: 'pointer'
-        }}
-      >
-        <div >{progress == 100 ? <Link href={"/loginUp"} onClick={handleSkip}>register your information</Link>: <Link href={user?.role == "artisan" ? urlArtisan : urlClient}>Complete Setup your profile</Link>}</div>
-      </div>
-      <div 
-        style={{
-          color: 'rgba(0, 167, 157, 1)',
-          fontWeight: '100', // font-thin in Tailwind
-          fontSize: '0.75rem', // text-xs in Tailwind
-          cursor: 'pointer',
-          width: '100%',
-          display: skip ? 'none' : 'flex',
-          justifyContent: 'flex-end'
-        }}
-      >
-        <Link 
-          href={user?.role === "artisan" ? "/signUp/artisan" : "/loginUp"} 
-          onClick={handleSkip}
-        >
-          skip for now
-        </Link>
+        <div className="text-sm text-[#00A79D] mb-2">
+          {progress}%
+        </div>
+        <div className="bg-[rgba(226,226,226,0.22)] rounded-3xl h-8 w-full mb-4">
+          <div 
+            className="bg-[rgba(0,167,157,0.68)] rounded-3xl h-full"
+            style={{ width: `${progress}%` }}
+          ></div>
+        </div>
+        <div className="text-[#727272] font-thin text-xs mb-4">
+          {progress == 100 ? <div>Congratulations, now you are one of us. All that remains is confirmation</div> : <div>we want to know more about you</div>}
+        </div>
+        <div className="bg-[#00A79D] text-white p-4 rounded-lg flex justify-center items-center mb-3 cursor-pointer">
+          <div>
+            {progress === 100 ? (
+              signUpSuccess ? (
+                <div>Redirecting to login...</div>
+              ) : (
+                <button onClick={handleSkip}>Complete Sign-up</button>
+              )
+            ) : (
+              <Link href={user?.role === 'artisan' ? urlArtisan : urlClient}>
+                Complete Setup your profile
+              </Link>
+            )}
+          </div>
+        </div>
+        <div className={`text-[#00A79D] font-thin text-xs cursor-pointer w-full ${skip ? 'hidden' : 'flex'} justify-end`}>
+          <Link 
+            href={user?.role === "artisan" ? "/signUp/artisan" : "/logIn"} 
+            onClick={handleSkip}
+          >
+            skip for now
+          </Link>
+        </div>
       </div>
     </div>
   </div>
-</div>
   )
 }
 

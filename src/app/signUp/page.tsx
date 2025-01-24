@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 import ProgressAuth from '@/component/progressAuth';
 const SignUp = () => {
   const router = useRouter();
-  const { setUser ,user, updateMultipleFields } = useUserStore();
+  const { setUser ,user,  } = useUserStore();
   const [showPassword, setShowPassword] = useState<boolean>(false)
   const [chose, setChose] = useState<string>('client');
   const [errors, setErrors] = useState({
@@ -34,14 +34,15 @@ const SignUp = () => {
   const [showModal, setShowModal] = useState(false);
   const handleSignUp = () => {
     if (isValid) {
-      const signUpData= {
+      const signUpData : User= {
         email: profile.Email,
         password: profile.password,
         full_name: `${profile.firstname} ${profile.lastname}`,
         role: profile.user,
         email_verified: false,
+        username:""
       }
-      updateMultipleFields(signUpData)
+      setUser(signUpData)
       setShowModal(true)}}
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -112,6 +113,12 @@ const SignUp = () => {
     
     setIsValid(isValidForm)
   }, [profile, errors])
+
+  const googleAuth = async () => {
+    router.replace(`http://localhost:3000/user/google`);
+  
+    };
+  console.log(user)
   return (
     <div className="flex justify-center items-center h-[700px] font-Poppins relative">
       <div className="flex-1 flex items-end justify-end">
@@ -200,7 +207,9 @@ const SignUp = () => {
               <div className='w-[30%] py-3 items-center justify-center flex border-[rgba(81,93,239,1)] rounded-[5px] border-[1.5px] cursor-pointer'>
                 <Image alt="artisan" src={img5} width={25} />
               </div>
-              <div className='w-[30%] py-3 items-center justify-center flex border-[rgba(81,93,239,1)] rounded-[5px] border-[1.5px] cursor-pointer'>
+              <div
+              onClick={googleAuth}
+              className='w-[30%] py-3 items-center justify-center flex border-[rgba(81,93,239,1)] rounded-[5px] border-[1.5px] cursor-pointer'>
                 <Image alt="artisan" src={img6} width={25} />
               </div>
               <div className='w-[30%] py-3 items-center justify-center flex border-[rgba(81,93,239,1)] rounded-[5px] border-[1.5px] cursor-pointer'>
@@ -241,7 +250,7 @@ const SignUp = () => {
             className={`w-10/12 py-4 mb-3 flex items-center justify-center text-white text-sm rounded-xl relative transition-all duration-300 ease-in-out top-0 hover:top-[-4px] ${isValid ? 'bg-[rgba(0,167,157,1)] cursor-pointer' : 'bg-gray-400 cursor-not-allowed'}`}
             disabled={!isValid}>Sign up</button>
           <div className='flex w-full justify-end items-center text-xs text-[rgba(114,114,114,0.8)]'>Already have an account? <div className='ml-2 text-green-500 cursor-pointer'>
-              <Link href="/loginUp">Login</Link>
+              <Link href="/logIn">Login</Link>
             </div>
           </div>
         </div>

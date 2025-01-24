@@ -1,9 +1,28 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState } from 'react';
+import Header from '../component/heroSection/header';
+import HeroSection from '../component/heroSection/heroSection';
+import Why from '../component/heroSection/why';
+import Categories from '../component/heroSection/categories';
+import How from '../component/heroSection/How';
+import Free from '../component/heroSection/free';
+import Footer from '../component/heroSection/footer';
+
+function LandingPage() {
+  const [data, setData] = useState(true); 
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-    
+    <div className='font-sofiFont'>
+      <Header setData={setData} /> 
+      <HeroSection data={data} />
+      <Why />
+      <Categories data={data} />
+      <How />
+      <Free data={data} />
+      <Footer />
     </div>
   );
 }
+
+export default LandingPage;
