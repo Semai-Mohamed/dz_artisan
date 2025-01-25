@@ -15,7 +15,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Create a new QueryClient instance
 const queryClient = new QueryClient();
 
 export default function RootLayout({

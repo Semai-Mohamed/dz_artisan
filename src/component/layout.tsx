@@ -8,35 +8,36 @@ import img4 from '../../public/images/Heart.svg'
 import img5 from '../../public/images/direct-inbox.svg'
 import img6 from '../../public/images/setting-2.svg'
 import img7 from '../../public/images/home.svg'
-
+interface LayoutProps {
+  height?: string | number; 
+}
 const menuItems = [
   {
     section: 'OVERVIEW',
     items: [
       { icon: img7, text: 'Home' },
-      { icon: img6, text: 'Inbox' },
-      { icon: img5, text: 'Liked' },
-      { icon: img4, text: 'Group' }
+      { icon: img5, text: 'Inbox' },
+      { icon: img4, text: 'Liked' },
+      { icon: img3, text: 'Group' }
     ]
   },
   {
     section: 'SETTINGS',
     items: [
-      { icon: img3, text: 'Settings' },
+      { icon: img6, text: 'Settings' },
       { icon: img, text: 'Logout' }
     ]
   }
 ];
 
-const Layout = () => {
-  const [activeItem, setActiveItem] = useState(null);
+const Layout: React.FC<LayoutProps> = ({ height  }) => {  const [activeItem, setActiveItem] = useState(null);
 
-  const handleItemClick = (text) => {
+  const handleItemClick = (text:any) => {
     setActiveItem(text === activeItem ? null : text);
   };
 
   return (
-    <div className=' top-0 left-0 h-[730px] w-[250px] bg-white shadow-lg mr-4'>
+    <div className={` top-0 left-0 h-[${height}px] w-[250px] bg-white shadow-lg mr-4`}>
       <div className='w-[80%] mx-auto flex justify-center flex-col gap-y-6 py-6'>
         <div className='flex gap-x-2 justify-center items-center'>
           <Image alt='' className='h-14 w-14' src={img2}></Image>
