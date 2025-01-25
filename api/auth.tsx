@@ -76,11 +76,6 @@ const loginSignUpData = async (userData: UserCredentials): Promise<LoginResponse
     data
   };
 };
-// const isAuthenticated = () => {
-//   const token = cookies.getItem('authToken')
-//   return token ? true : false
-// };
-
 export { loginSignUpData,};
 
 

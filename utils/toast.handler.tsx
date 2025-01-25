@@ -10,7 +10,7 @@ const ToastHandler = (
   const displayMessage =
     typeof message === "string" ? message : message[0] || "An error occurred";
 
-  return toast.({
+  return toast({
     type: type,
     text1: title,
     text2: displayMessage,
