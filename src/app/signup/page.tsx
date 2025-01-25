@@ -4,15 +4,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useUserStore } from '../../../utils/authStore';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import ProgressAuth from '@/component/progressAuth';
-import { z } from 'zod';
-import { signupSchema } from '../../../schema/auth';
-import SocialAuth from '../../../common/SocialAuth';
+import { useSignUpMutation } from '../../../api/auth'; // Import the mutation hook
 import ToastHandler from '../../../common/toasthHandler'; // Import the toast handler
-import { useSignUpMutation } from '../../../api/auth';
 
 const SignUp = () => {
-  const { updateMultipleFields } = useUserStore();
+  const router = useRouter();
+  const { setUser, user, updateMultipleFields } = useUserStore();
   const [showPassword, setShowPassword] = useState(false);
   const [chose, setChose] = useState<'client' | 'artisan'>('client');
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -28,7 +27,7 @@ const SignUp = () => {
 
   // Use the sign-up mutation
   const { mutate: signUp, isLoading } = useSignUpMutation({
-    full_name: profile.firstname + " " + profile.lastname,
+    full_name: `${profile.firstname} ${profile.lastname}`,
     lastname: profile.lastname,
     email: profile.email,
     password: profile.password,
@@ -37,20 +36,48 @@ const SignUp = () => {
 
   const handleSignUp = () => {
     // Validate the form data
-    const validationResult = signupSchema.safeParse(profile);
+    const isEmailValid = validateEmail(profile.email);
+    const isPasswordValid = validatePassword(profile.password);
+    const isConfirmPasswordValid = validateConfirmPassword(profile.password, profile.confirmpassword);
 
-    if (!validationResult.success) {
-      // If validation fails, update the errors state
-      const newErrors: Record<string, string> = {};
-      validationResult.error.errors.forEach((err) => {
-        newErrors[err.path[0]] = err.message;
-      });
-      setErrors(newErrors);
+    if (!isEmailValid || !isPasswordValid || !isConfirmPasswordValid) {
       return; // Stop further execution if validation fails
     }
 
     // If validation passes, call the sign-up mutation
     signUp();
+  };
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setErrors((prev) => ({ ...prev, email: 'Please enter a valid email address' }));
+      return false;
+    }
+    setErrors((prev) => ({ ...prev, email: '' }));
+    return true;
+  };
+
+  const validatePassword = (password: string) => {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      setErrors((prev) => ({
+        ...prev,
+        password: 'Password must be at least 8 characters long and contain 1 uppercase, 1 lowercase, and 1 special character',
+      }));
+      return false;
+    }
+    setErrors((prev) => ({ ...prev, password: '' }));
+    return true;
+  };
+
+  const validateConfirmPassword = (password: string, confirmPassword: string) => {
+    if (password !== confirmPassword) {
+      setErrors((prev) => ({ ...prev, confirmPassword: 'Passwords do not match' }));
+      return false;
+    }
+    setErrors((prev) => ({ ...prev, confirmPassword: '' }));
+    return true;
   };
 
   const handleTogglePassword = () => setShowPassword(!showPassword);
@@ -63,10 +90,28 @@ const SignUp = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setProfile((prev) => ({ ...prev, [name]: value }));
+
+    if (name === 'email') {
+      validateEmail(value);
+    } else if (name === 'password') {
+      validatePassword(value);
+      if (profile.confirmpassword) {
+        validateConfirmPassword(value, profile.confirmpassword);
+      }
+    } else if (name === 'confirmpassword') {
+      validateConfirmPassword(profile.password, value);
+    }
   };
 
-  // Check if the form is valid
-  const isFormValid = signupSchema.safeParse(profile).success;
+  const isFormValid =
+    profile.firstname &&
+    profile.lastname &&
+    profile.email &&
+    profile.password &&
+    profile.confirmpassword &&
+    !errors.email &&
+    !errors.password &&
+    !errors.confirmPassword;
 
   return (
     <div className="flex justify-center items-center h-[700px] font-Poppins relative">
@@ -90,7 +135,6 @@ const SignUp = () => {
                   type="text"
                   className="bg-[rgba(217,217,217,0.23)] border-none outline-none text-[rgba(79,79,79,0.78)] placeholder:text-[rgba(79,79,79,0.48)] pl-5 h-14 rounded-xl w-11/12"
                 />
-                {errors.firstname && <div className="text-red-500 text-xs mt-1">{errors.firstname}</div>}
               </div>
               <div className="mb-5 flex-1 flex flex-col gap-y-2 relative">
                 <label className="text-[rgba(114,114,114,0.7)] pl-2 font-semibold">Last name</label>
@@ -102,7 +146,6 @@ const SignUp = () => {
                   placeholder="Last name"
                   className="bg-[rgba(217,217,217,0.23)] border-none outline-none text-[rgba(79,79,79,0.78)] placeholder:text-[rgba(79,79,79,0.48)] pl-5 h-14 rounded-xl w-11/12"
                 />
-                {errors.lastname && <div className="text-red-500 text-xs mt-1">{errors.lastname}</div>}
               </div>
             </div>
             <div className="mb-5 flex flex-col gap-y-2 relative w-11/12">
@@ -155,13 +198,21 @@ const SignUp = () => {
                   placeholder="**********"
                   className={`bg-[rgba(217,217,217,0.23)] border-none outline-none text-[rgba(79,79,79,0.78)] 
                     placeholder:text-[rgba(79,79,79,0.48)] pl-5 h-14 rounded-xl w-full
-                    ${errors.confirmpassword ? 'border-2 border-red-500' : ''}`}
+                    ${errors.confirmPassword ? 'border-2 border-red-500' : ''}`}
                 />
-                {errors.confirmpassword && <div className="text-red-500 text-xs mt-1">{errors.confirmpassword}</div>}
+                {errors.confirmPassword && <div className="text-red-500 text-xs mt-1">{errors.confirmPassword}</div>}
               </div>
             </div>
             <div className="flex items-center justify-between w-11/12">
-              <SocialAuth />
+              <div className="w-[30%] py-3 items-center justify-center flex border-[rgba(81,93,239,1)] rounded-[5px] border-[1.5px] cursor-pointer">
+                <Image alt="artisan" src="/images/Vector (2).svg" width={25} height={25} />
+              </div>
+              <div className="w-[30%] py-3 items-center justify-center flex border-[rgba(81,93,239,1)] rounded-[5px] border-[1.5px] cursor-pointer">
+                <Image alt="artisan" src="/images/flat-color-icons_google.svg" width={25} height={25} />
+              </div>
+              <div className="w-[30%] py-3 items-center justify-center flex border-[rgba(81,93,239,1)] rounded-[5px] border-[1.5px] cursor-pointer">
+                <Image alt="artisan" src="/images/ant-design_apple-filled.svg" width={25} height={25} />
+              </div>
             </div>
           </div>
         </div>
@@ -211,16 +262,16 @@ const SignUp = () => {
           </div>
           <button
             onClick={handleSignUp}
-            className={`w-10/12 mt-6 py-4 mb-3 flex items-center justify-center text-white text-sm rounded-xl relative transition-all duration-300 ease-in-out top-0 hover:top-[-4px] ${
+            className={`w-10/12 py-4 mb-3 flex items-center justify-center text-white text-sm rounded-xl relative transition-all duration-300 ease-in-out top-0 hover:top-[-4px] ${
               isFormValid ? 'bg-[rgba(0,167,157,1)] cursor-pointer' : 'bg-gray-400 cursor-not-allowed'
             }`}
-  
+            disabled={!isFormValid || isLoading}
           >
             {isLoading ? 'Signing up...' : 'Sign up'}
           </button>
           <div className="flex w-full justify-end items-center text-xs text-[rgba(114,114,114,0.8)]">
             Already have an account?{' '}
-            <Link href="/loginup" className="ml-2 text-green-500 cursor-pointer">
+            <Link href="/signin" className="ml-2 text-green-500 cursor-pointer">
               Login
             </Link>
           </div>
