@@ -28,9 +28,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* Wrap the children with QueryClientProvider */}
         <QueryClientProvider client={queryClient}>
-          {/* Optional: If using react-hot-toast for notifications */}
+          <div><Toaster/></div>
           <Toaster />
           {children}
         </QueryClientProvider>
