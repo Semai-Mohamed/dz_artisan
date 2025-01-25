@@ -40,12 +40,12 @@
       }
     };
     
-    export type SigninCollectorDto = {
-      identifier: string;
+    export type SigninDto = {
+      email: string;
       password: string;
     };
     
-    export type SignupCollectorDto = {
+    export type SignupDto = {
       full_name: string;
       lastname: string;
       email: string;
@@ -54,38 +54,39 @@
     };
     
     // api calls
-    export const SigninCollector = async (form: SigninCollectorDto) => {
+    export const Signin = async (form: SigninDto) => {
       const response = await api.post("/user/signin", form);
       return response.data;
     };
     
-    export const SignupCollector = async (form: SignupCollectorDto) => {
+    export const Signup = async (form: SignupDto) => {
       const response = await api.post("/user/signup", form);
       return response.data;
     };
     
     // mutations
-    export const useSignInMutation = (form: SigninCollectorDto) => {
+    export const useSignInMutation = (form: SigninDto) => {
       const router = useRouter();
     
       return useMutation({
-        mutationFn: () => SigninCollector(form),
-        onSuccess: async (data) => {
-          router.replace("/(tabs)/home");
+        mutationFn: () => Signin(form), // Pass the form data directly
+        onSuccess: async (data : any) => {
+          router.replace("/");
         },
         onError: (error: any) => {
+          console.log(error.response.data);
           ToastHandler("error", error.response?.data.message);
         },
       });
     };
-    export const useSignUpMutation = (form: SignupCollectorDto) => {
+    export const useSignUpMutation = (form: SignupDto) => {
       const router = useRouter();
     
       return useMutation({
-        mutationFn: () => SignupCollector(form), // Use the signUp function from your auth API
+        mutationFn: () => Signup(form), // Use the signUp function from your auth API
         onSuccess: async (data : any) => {
           ToastHandler("success","Welcome aboard");
-          router.replace("/(tabs)/home");
+          router.replace("/home");
         },
         onError: (error: any) => {
           ToastHandler(
