@@ -23,15 +23,14 @@ const ParentComponent: React.FC = () => {
     { id: 3, name: 'Charlie', work: 'Product Manager', defaultValue: 5, precision: 1, readOnly: true, img: img, text: 'I ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended' },
   ];
 
-  // دالة للتعامل مع النقر على "Continue" في ChoseCard
   const handleContinueClick = (data: {
     whatHeWillDo: string;
     imgProfile: string;
     username: string;
     profession: string;
   }) => {
-    setFormData(data); // حفظ البيانات
-    setShowForm(true); // إظهار النموذج
+    setFormData(data);
+    setShowForm(true); 
   };
 
   return (
@@ -40,7 +39,11 @@ const ParentComponent: React.FC = () => {
       <div className='w-full'>
         <Header></Header>
         <div className='flex flex-col'>
+         <div className='flex flex-row gap-x-5'>
+         <Chose showForm={showForm} onContinueClick={handleContinueClick}></Chose>
           <Chose showForm={showForm} onContinueClick={handleContinueClick}></Chose>
+          <Chose showForm={showForm} onContinueClick={handleContinueClick}></Chose>
+         </div>
           <div className='text-[rgba(32,32,32,1)] font-semibold m-3 text-xl'>Reviews</div>
           <div className="w-full h-[270px] flex gap-x-5"> 
             {data.map((item) => (
@@ -58,7 +61,7 @@ const ParentComponent: React.FC = () => {
             ))}
           </div>
         </div>
-        
+
       </div>
       {showForm && formData && (
         <div className='fixed inset-0 w-full  bg-black bg-opacity-50 backdrop-blur-sm z-10'>

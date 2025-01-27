@@ -7,8 +7,9 @@ import img2 from '../../../public/images/alireza-valizadeh-o6WViBEzOWU-unsplash 
 import img3 from '../../../public/images/alireza-valizadeh-o6WViBEzOWU-unsplash 1.png';
 import img4 from '../../../public/images/Subtract (2).svg';
 import Link from 'next/link';
-import { useSignInMutation } from '../../../api/auth'; // Import your login API function
+import { useSignInMutation } from '../../../api/auth'; 
 import SocialAuth from '../../../common/SocialAuth';
+import { useRouter } from 'next/navigation';
 
 const Login = () => {
   const router = useRouter()

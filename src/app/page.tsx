@@ -9,7 +9,7 @@ import How from '../component/heroSection/How';
 import Free from '../component/heroSection/free';
 import Footer from '../component/heroSection/footer';
 
-function LandingPage() {
+export default function LandingPage() {
   const [data, setData] = useState(true); 
 
   return (

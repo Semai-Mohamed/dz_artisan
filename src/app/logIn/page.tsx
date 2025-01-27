@@ -11,7 +11,7 @@ import img6 from '../../../public/images/flat-color-icons_google.svg'
 import img7 from '../../../public/images/ant-design_apple-filled.svg'
 import Link from 'next/link';
 import { useMutation } from 'react-query';
-import { loginSignUpData } from '../../../api/auth';
+import { loginSignUpData } from '../../../api/auth1';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 const Login = () => {
