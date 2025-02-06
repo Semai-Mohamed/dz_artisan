@@ -1,13 +1,11 @@
-'use client';
+'use client';;
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useUserStore } from '../../../utils/authStore';
-import { useEffect, useState } from 'react';
+import {  useState } from 'react';
 import { useRouter } from 'next/navigation';
-import ProgressAuth from '@/component/progressAuth';
 import { useSignUpMutation } from '../../../api/auth'; // Import the mutation hook
-import ToastHandler from '../../../common/toasthHandler'; // Import the toast handler
 
 const SignUp = () => {
   const router = useRouter();

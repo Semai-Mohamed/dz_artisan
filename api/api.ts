@@ -6,7 +6,7 @@ interface CustomAxiosInstance extends AxiosInstance {
 }
 
 const api: CustomAxiosInstance = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: "https://server.yxne.tech",
   validateStatus: (status) => status == 200 || status == 201,
   headers: {
     "Content-Type": "application/json",

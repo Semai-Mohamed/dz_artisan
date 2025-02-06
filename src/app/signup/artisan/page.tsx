@@ -1,17 +1,15 @@
-'use client'
-import { useState, useEffect } from "react"
+'use client';
+import { useState } from "react";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import Image from "next/image"
-import img1 from "../../../../public/images/folder-dynamic-color.svg"
-import img2 from "../../../../public/images/!.svg"
-import img3 from "../../../../public/images/Subtract.svg"
-import img5 from "../../../../public/images/x.svg"
-import img7 from "../../../../public/images/Group 2393.svg"
-import Link from "next/link";
+import img1 from "@/../public/images/folder-dynamic-color.svg"
+import img2 from "@/../public/images/!.svg"
+import img3 from "@/../public/images/Subtract.svg"
+import img5 from "@/../public/images/x.svg"
+import img7 from "@/../public/images/Group 2393.svg"
 import {User, useUserStore } from "../../../../utils/authStore";
 import ConditionalRedirect from "@/component/verify";
 import { useRouter } from "next/navigation";
-import { set } from "zod";
 import ProjectForm from "@/component/ui/projectform";
 import FileUpload from "@/component/ui/fileUpload";
 import { JobDetailsDto, ProjectDto, useJobDetailsMutation, useProjectsMutation } from "../../../../api/auth";

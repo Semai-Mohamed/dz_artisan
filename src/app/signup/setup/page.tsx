@@ -1,17 +1,14 @@
-'use client'
-
-import { useState, useEffect } from "react"
+'use client';
+import { useState } from "react";
 import Image from "next/image"
-import img1 from "../../../../public/images/folder-dynamic-color.svg"
-import img2 from "../../../../public/images/!.svg"
-import img3 from "../../../../public/images/Subtract.svg"
-import img4 from "../../../../public/images/Component Placeholder Image.svg"
-import img5 from "../../../../public/images/x.svg"
+import img1 from "@/../public/images/folder-dynamic-color.svg"
+import img2 from "@/../public/images/!.svg"
+import img3 from "@/../public/images/Subtract.svg"
+import img4 from "@/../public/images/Component Placeholder Image.svg"
+import img5 from "@/../public/images/x.svg"
 import { useUserStore , User } from '../../../../utils/authStore';
-import Link from "next/link"
 import ConditionalRedirect from "@/component/verify"
-import ProgressAuth from "@/component/progressAuth"
-import { useSignUpMutation ,useCompleteProfileMutation, CompleteProfileDto } from "../../../../api/auth"
+import { useCompleteProfileMutation } from "../../../../api/auth";
 const Setup = () => {
   const [email,setEmail] = useState<boolean>(false)
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
