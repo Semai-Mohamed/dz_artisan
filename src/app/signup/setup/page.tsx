@@ -211,10 +211,10 @@ const Setup = () => {
                 </div>
                 <div className="flex items-center gap-x-2">
                   <span 
-                    onClick={() => setProfile(prev => ({ ...prev, work: "i will win" }))} 
+                    onClick={() => setProfile(prev => ({ ...prev, work: "other" }))} 
                     className={`w-2 h-2 rounded-full outline-offset-2 outline-double outline-1 outline-[rgba(81,93,239,1)] ${profile.work === "i will win" ? "bg-[rgba(81,93,239,1)]" : ""}`}
                   />
-                  <div className="text-[rgba(114,114,114,0.8)] text-sm font-thin">i will win</div>
+                  <div className="text-[rgba(114,114,114,0.8)] text-sm font-thin">Others</div>
                 </div>
               </div>
               <div className="text-2xl font-semibold text-[rgba(65,65,65,1)] relative mb-4">Add your Picture</div>

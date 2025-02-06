@@ -99,7 +99,7 @@ const Categories: React.FC<CategoriesProps> = ({ data }) => {
                 onMouseLeave={() => clickHandler(false)} 
                 onMouseEnter={() => clickHandler(true)}
               >
-                <Link className='pr-3' href={'/signUp'}>
+                <Link className='pr-3' href={'/signup/setup'}>
                   I want to hire
                 </Link>
                 <div>
@@ -120,7 +120,7 @@ const Categories: React.FC<CategoriesProps> = ({ data }) => {
                 onMouseLeave={() => clickHandler(false)} 
                 onMouseEnter={() => clickHandler(true)}
               >
-                <Link href={'/signUp'} className='pr-3'>
+                <Link href={'/signup/setup'} className='pr-3'>
                   I want to work
                 </Link>
                 <div>
