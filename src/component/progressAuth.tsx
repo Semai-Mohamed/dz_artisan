@@ -5,9 +5,10 @@ import img2 from '../../public/images/trophy-dynamic-color.svg'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { useMutation } from 'react-query'
-import postSignUpData, { SignUpResponse } from '../../api/auth'
+import postSignUpData from '../../api/auth'
 import { useRouter } from 'next/navigation'
 import { useUserStore } from '../../utils/authStore'
+import { SignUpResponse } from '../../api/auth1';
 interface ChildComponentProps {
   skip: boolean;
   progress: number;

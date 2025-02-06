@@ -1,5 +1,6 @@
 import * as React from "react";
 import { WorkingProjectProps } from "./types";
+import Image from "next/image";
 
 export const WorkingProject: React.FC<WorkingProjectProps> = ({
   authorImage,
@@ -11,11 +12,13 @@ export const WorkingProject: React.FC<WorkingProjectProps> = ({
   return (
     <div className="flex flex-wrap gap-10 items-center mt-6 w-full max-md:max-w-full">
       <div className="flex flex-1 shrink gap-2 justify-center items-center self-stretch my-auto basis-6">
-        <img
+        <Image
+        height={30}
+        width={30}
           loading="lazy"
           src={authorImage}
           alt={authorName}
-          className="object-contain shrink-0 self-stretch my-auto w-6 aspect-square"
+          className="object-contain shrink-0 self-stretch my-auto w-6 aspect-square rounded-full"
         />
         <div className="flex flex-col flex-1 shrink self-stretch my-auto basis-0">
           <div className="text-sm font-medium text-neutral-800">

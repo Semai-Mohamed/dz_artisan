@@ -161,7 +161,7 @@ const Login = () => {
               <div className="w-11/12 flex justify-end text-sm items-center mb-4 text-[rgba(114,114,114,1)]">
                 Don't have an account?{' '}
                 <div className="ml-1 text-[rgba(81,93,239,1)] text-sm cursor-pointer">
-                  <Link href="/signUp">Sign Up</Link>
+                  <Link href="/signup">Sign Up</Link>
                 </div>
               </div>
               <div className="flex justify-center items-center w-11/12 mb-6 text-[rgba(49,49,49,0.7)] font-thin">

@@ -89,7 +89,7 @@ const Categories: React.FC<CategoriesProps> = ({ data }) => {
           {data ? (
             <div className='flex gap-x-6 items-center my-12'>
               <Link 
-                href={'/logIn'} 
+                href={'/signin'} 
                 className='text-white font-semibold bg-greenSofic py-3 px-4 rounded-xl cursor-pointer transition-transform duration-300 delay-100 hover:-translate-y-1'
               >
                 Find work opportunities
@@ -99,7 +99,7 @@ const Categories: React.FC<CategoriesProps> = ({ data }) => {
                 onMouseLeave={() => clickHandler(false)} 
                 onMouseEnter={() => clickHandler(true)}
               >
-                <Link className='pr-3' href={'/signup/setup'}>
+                <Link className='pr-3' href={'/signup'}>
                   I want to hire
                 </Link>
                 <div>
@@ -110,7 +110,7 @@ const Categories: React.FC<CategoriesProps> = ({ data }) => {
           ) : (
             <div className='flex gap-x-6 items-center my-12'>
               <Link 
-                href={'/logIn'} 
+                href={'/signin'} 
                 className='text-white font-semibold bg-blueSofic py-3 px-4 rounded-xl cursor-pointer transition-transform duration-300 delay-100 hover:-translate-y-1'
               >
                 Find freelance services
@@ -120,7 +120,7 @@ const Categories: React.FC<CategoriesProps> = ({ data }) => {
                 onMouseLeave={() => clickHandler(false)} 
                 onMouseEnter={() => clickHandler(true)}
               >
-                <Link href={'/signup/setup'} className='pr-3'>
+                <Link href={'/signup'} className='pr-3'>
                   I want to work
                 </Link>
                 <div>

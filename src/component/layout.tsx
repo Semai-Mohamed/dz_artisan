@@ -8,6 +8,7 @@ import img4 from '../../public/images/Heart.svg'
 import img5 from '../../public/images/direct-inbox.svg'
 import img6 from '../../public/images/setting-2.svg'
 import img7 from '../../public/images/home.svg'
+import Link from 'next/link';
 interface LayoutProps {
   height?: string | number; 
 }
@@ -16,9 +17,10 @@ const menuItems = [
     section: 'OVERVIEW',
     items: [
       { icon: img7, text: 'Home' },
+      { icon: img3, text: 'Artist' },
       { icon: img5, text: 'Inbox' },
       { icon: img4, text: 'Liked' },
-      { icon: img3, text: 'Group' }
+     
     ]
   },
   {
@@ -51,8 +53,8 @@ const Layout: React.FC<LayoutProps> = ({ height  }) => {  const [activeItem, set
           <React.Fragment key={sectionIndex}>
             <div className='text-xl font-semibold text-gray-700 mt-10'>{section.section}</div>
             {section.items.map((item, itemIndex) => (
-              <div 
-                key={itemIndex} 
+              <Link href={item.text === 'Settings' ? 'profile' : (item.text === 'Logout' ? 'signin' : `/${item.text.toLowerCase()}`)}
+              key={itemIndex} 
                 onClick={() => handleItemClick(item.text)}
                 className={`flex gap-x-3 w-[80%] py-2 rounded-xl items-center cursor-pointer 
                   transition-all duration-300 ease-in-out
@@ -62,7 +64,7 @@ const Layout: React.FC<LayoutProps> = ({ height  }) => {  const [activeItem, set
               >
                 <div><Image alt='' src={item.icon}></Image></div>
                 <div>{item.text}</div>
-              </div>
+              </Link>
             ))}
           </React.Fragment>
         ))}

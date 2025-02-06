@@ -1,14 +1,56 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Card from '../../component/card';
 import Layout from '../../component/layout';
 import Header from '../../component/header';
 import img from '../../../public/images/Icon Strategy.svg';
 import Chose from '../../component/Basic';
 import BasicForm from '@/component/BasicForm';
+import { useProfileMutation } from '../../../api/artisanApi';
+import { useUserStore } from '../../../utils/authStore';
 
 const ParentComponent: React.FC = () => {
+  const { user, setUser } = useUserStore();
+  const { mutate: fetchProfile, data: profileData, isSuccess, isLoading, error } = useProfileMutation();
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  useEffect(() => {
+    if (isSuccess && profileData) {
+      console.log("Profile data in component:", profileData);
+      setUser({
+        lastname: profileData.data.username,
+        email: profileData.data.email,
+        full_name: profileData.data.full_name,
+        phone_number: profileData.data.phone_number,
+        address: profileData.data.address,
+        wilaya: profileData.data.wilaya,
+        birthday: profileData.data.birthday,
+        bio: profileData.data.bio,
+        profile_picture: profileData.data.profile_picture || "/default-avatar.png",
+        employment_status: profileData.data.employment_status,
+        role: profileData.data.role,
+        email_verified: profileData.data.email_verified,
+      });
+    }
+  }, [isSuccess, profileData]);
+
+  useEffect(() => {
+    if (isLoading) {
+      console.log("Loading profile...");
+    }
+    if (error) {
+      console.log("Error loading profile:", error);
+    }
+  }, [isLoading, error]);
+
+console.log(profileData)
+
+  const [showProfile, setShowProfile] = useState(false);
+
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState<{
     whatHeWillDo: string;
@@ -37,12 +79,10 @@ const ParentComponent: React.FC = () => {
     <div className='flex flex-row'>
       <Layout height={900}></Layout>
       <div className='w-full'>
-        <Header></Header>
-        <div className='flex flex-col'>
+      <Header/><div className='flex flex-col'>
          <div className='flex flex-row gap-x-5'>
          <Chose showForm={showForm} onContinueClick={handleContinueClick}></Chose>
-          <Chose showForm={showForm} onContinueClick={handleContinueClick}></Chose>
-          <Chose showForm={showForm} onContinueClick={handleContinueClick}></Chose>
+         
          </div>
           <div className='text-[rgba(32,32,32,1)] font-semibold m-3 text-xl'>Reviews</div>
           <div className="w-full h-[270px] flex gap-x-5"> 

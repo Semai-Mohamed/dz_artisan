@@ -6,23 +6,44 @@ import img1 from "../../../../public/images/folder-dynamic-color.svg"
 import img2 from "../../../../public/images/!.svg"
 import img3 from "../../../../public/images/Subtract.svg"
 import img5 from "../../../../public/images/x.svg"
-import img6 from "../../../../public/images/Upload icon.svg"
 import img7 from "../../../../public/images/Group 2393.svg"
 import Link from "next/link";
 import {User, useUserStore } from "../../../../utils/authStore";
 import ConditionalRedirect from "@/component/verify";
 import { useRouter } from "next/navigation";
+import { set } from "zod";
+import ProjectForm from "@/component/ui/projectform";
+import FileUpload from "@/component/ui/fileUpload";
+import { JobDetailsDto, ProjectDto, useJobDetailsMutation, useProjectsMutation } from "../../../../api/auth";
+import toast from "react-hot-toast";
 
 const Setup = () => {
+  const [open, setOpen] = useState(false);  
+  const clickhandler = () => {  
+       setOpen(true);
+  }
+  const [jobDetails, setJobDetails] = useState({
+    job_title: '',
+    years_experience: 0,
+    cv_document: null as File | null
+  });
+  type Project = {
+    title: string;
+    description: string;
+    completion_date: string;
+  }
+  const [projects, setProjects] = useState<Project[]>([]);
+  const handleProjectsUpdate = (newProjects: Project[]) => {
+    setProjects(newProjects);
+  };
   const router = useRouter()
   const [email,setEmail] = useState<boolean>(false)
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [birthday, setBirthday] = useState({ day: '', month: '', year: '' });
   const [errors, setErrors] = useState({ username: '', about: '', year: '' });
-  const verifyKeys: Array<keyof User> = ['username', 'birthday',"employment_status","email","full_name","role"];
+  const verifyKeys: Array<keyof User> = [ 'birthday',"employment_status","email","full_name","role"];
   const { user } = useUserStore();
-  console.log(user)
   const [profile, setProfile] = useState({
     username: "",
     about: "",
@@ -30,31 +51,66 @@ const Setup = () => {
     work: "",
     image: ""
   });
-  const isValidForm = () => {
-    const usernameRegex = /^[a-zA-Z0-9_]{6,30}$/;
-    return (
-      usernameRegex.test(profile.username) &&
-      profile.about.length <= 200 &&
-      profile.work !== "" &&
-      birthday.day !== "" &&
-      birthday.month !== "" &&
-      birthday.year !== "" &&
-      parseInt(birthday.year) >= 1900
-    );
-  };
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (file.size > 100 * 1024) {
-        alert("File size must be less than 100KB");
-        return;}
-      setSelectedFile(file);
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
-      setProfile(prev => ({ ...prev, image: url }));
-    }};
-    console.log(user)
+  const projectsMutation = useProjectsMutation();
+  const jobDetailsMutation = useJobDetailsMutation();
 
+  const handleFinish = () => {
+    // Validate input
+    if (projects.length < 2) {
+      toast.error("You need to add at least 2 projects");
+      return;
+    }
+
+    if (!jobDetails.job_title || jobDetails.years_experience === 0 || !jobDetails.cv_document) {
+      toast.error("Please complete all job details");
+      return;
+    }
+
+    // Prepare data for submission
+    const projectsToSubmit: ProjectDto[] = projects.map(project => ({
+      title: project.title,
+      description: project.description,
+      completion_date: project.completion_date
+    }));
+
+    const jobDetailsToSubmit: JobDetailsDto = {
+      job_title: jobDetails.job_title,
+      years_experience: jobDetails.years_experience,
+      cv_document: jobDetails.cv_document
+    };
+
+    // Submit projects first
+    jobDetailsMutation.mutate(jobDetailsToSubmit, {
+      onSuccess: () => {
+      
+        projectsMutation.mutate(projectsToSubmit);
+      }
+    });
+  };
+  
+  const handleJobTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setJobDetails(prev => ({
+      ...prev,
+      job_title: e.target.value
+    }));
+  };
+
+  const handleExperienceChange = (value: number) => {
+    setJobDetails(prev => ({
+      ...prev,
+      years_experience: value
+    }));
+  };
+
+  // Handle CV document upload
+  const handleCVUpload = (file: File | null) => {
+    setJobDetails(prev => ({
+      ...prev,
+      cv_document: file
+    }));
+  };
+  
+  console.log(projects, jobDetails);
   return (
     <div className="w-full flex justify-center items-center h-[700px] font-Poppins">
       <ConditionalRedirect  url="/signUp" verify={verifyKeys}></ConditionalRedirect>
@@ -83,38 +139,43 @@ const Setup = () => {
               <div className="flex gap-x-8 mb-6 items-center w-full ">
                <div className="flex flex-1 flex-col  justify-center gap-y-3">
                 <label htmlFor="" className="text-[rgba(114,114,114,1)]">What ur job</label>
-                <input className="bg-[rgba(246,246,246,1)] text-[#989898] w-full h-12 pl-6 rounded-xl outline-none border border-[#bcbcbc] hover:border-[#3e3e3e]" type="text" placeholder="job" name="job"/>
-               </div>
+                <input 
+                  className="bg-[rgba(246,246,246,1)] text-[#989898] w-full h-12 pl-6 rounded-xl outline-none border border-[#bcbcbc] hover:border-[#3e3e3e]" 
+                  type="text" 
+                  placeholder="job" 
+                  name="job"
+                  value={jobDetails.job_title}
+                  onChange={handleJobTitleChange}
+                />               </div>
                <div className="flex flex-1 flex-col  justify-center gap-y-3">
                     <label className="text-[rgba(114,114,114,1)]" htmlFor="">year of exp</label>
                     <FormControl className="border-none" fullWidth>
-  <InputLabel id="demo-simple-select-label">exp</InputLabel>
-  <Select
-    labelId="demo-simple-select-label"
-    id="demo-simple-select"
-    sx={{
-        backgroundColor: "rgba(246,246,246,1)",
-        color: "#989898",
-        height: "48px", 
-        outline:"none",
-        borderRadius: "12px", // rounded-xl in Tailwind
-        border: "none", // border-none in Tailwind
-      }}
-    label="exp">
-    <MenuItem value={10}>1-2</MenuItem>
-    <MenuItem value={20}>3-5</MenuItem>
-    <MenuItem value={30}>More than 5</MenuItem>
-  </Select>
-</FormControl>
+                      <InputLabel id="demo-simple-select-label">exp</InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        sx={{
+                          backgroundColor: "rgba(246,246,246,1)",
+                          color: "#989898",
+                          height: "48px", 
+                          outline:"none",
+                          borderRadius: "12px",
+                          border: "none",
+                        }}
+                        label="exp"
+                        value={jobDetails.years_experience}
+                        onChange={(e) => handleExperienceChange(Number(e.target.value))}
+                      >
+                        <MenuItem value={1}>1-2</MenuItem>
+                        <MenuItem value={3}>3-5</MenuItem>
+                        <MenuItem value={5}>More than 5</MenuItem>
+                      </Select>
+                    </FormControl>
                 </div>
               </div>
              
               <div className="text-2xl font-semibold text-[rgba(65,65,65,1)] relative mb-4">upload your resum</div>
-              <div className="w-full flex flex-col border border-dashed border-[rgba(0,167,157,1)] rounded-md bg-[rgba(0,167,157,0.03)] h-[220px]  justify-center items-center ">
-                 <div className="mb-4"><Image alt="" src={img6} ></Image></div>
-                 <div className="text-[rgba(65,65,65,1)] mb-1">Drag & drop files or <Link href={"/"} className="ml-1 text-[rgba(0,167,157,1)]">Browse</Link></div>
-                 <div className="text-[rgba(103,103,103,0.8)]] font-thin text-xs">Supported formates: JPEG, PNG, GIF, MP4, PDF, PSD, AI, Word, PPT</div>
-              </div>
+              <FileUpload onFileUpload={handleCVUpload}></FileUpload>
             </div>
           </div>
           <div className="flex flex-col  w-[53%] items-end  h-[350px]">
@@ -133,21 +194,26 @@ const Setup = () => {
                 <Image alt="" className="flex flex-1" src={img7}></Image>
             </div>
            </div>
-           <button className="flex w-full justify-center items-center gap-y-3 flex-col z-10 mt-8 ">
+           <button onClick={clickhandler} className="flex w-full justify-center items-center gap-y-3 flex-col z-10 mt-8 ">
             <div className="h-20 w-20 flex justify-center items-center rounded-full bg-[rgba(62,189,182,1)] text-white font-bold text-3xl">+</div>
             <div className="py-3 bg-white rounded-lg flex justify-center items-center font-thin text-sm text-[rgba(32,32,32,1)] w-[60%] shadow-custom-shadow">you need at least upload 2 projects</div>
            </button>
           </div>
           <div className=" justify-end items-center flex mt-8">
-            <button className="bg-[rgba(32,32,32,1)] py-3 px-16 font-thin text-xs text-white rounded-lg">
-                Finish
-            </button>
-          </div>
+        <button 
+          onClick={handleFinish}
+          disabled={projectsMutation.isLoading || jobDetailsMutation.isLoading}
+          className="bg-[rgba(32,32,32,1)] py-3 px-16 font-thin text-xs text-white rounded-lg"
+        >
+          {(projectsMutation.isLoading || jobDetailsMutation.isLoading) 
+            ? "Submitting..." 
+            : "Finish"}
+        </button>
+      </div>
           </div>
       </div>     
     </div>
         </div>
-      </div>
-  )
-}
+        <ProjectForm onProjectsUpdate={handleProjectsUpdate} setOpen={setOpen} open={open}></ProjectForm> 
+      </div>)}
 export default Setup

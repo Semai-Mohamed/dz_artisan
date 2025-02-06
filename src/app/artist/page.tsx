@@ -1,49 +1,55 @@
 "use client";
-import { ProjectCard } from "@/component/dashboard/ProjectCard";
-import { StatCard } from "@/component/dashboard/StatCard";
-import { WorkingProject } from "@/component/dashboard/WorkingProject";
-import { Profile } from "@/component/profile/Profile";
-import { NavigationItemProps } from "@/component/sidebar/types";
-import { Sidebar } from "@/component/sidebar/Sidebar";
-import React from "react";
 import { Dashboard } from "@/component/dashboard/Dashboard";
+import Layout from "@/component/layout";
+import { Profile } from "@/component/profile/Profile";
+import { useGetArtisanJobsMutation } from "../../../api/artisanApi";
+import { useUserStore } from "../../../utils/authStore";
+import { useEffect } from "react";
 
 export default function Home() {
-  const navigationItems: NavigationItemProps[] = [
-    { label: "Dashboard", icon: "dashboard", href: "/artist" },
-    { label: "Projects", icon: "projects", href: "/artist/projects" },
-    { label: "inbox", icon: "inbox", href: "/artist/inbox" },
-    { label: "Settings", icon: "settings", href: "/artist/settings" },
-  ];
+  // ✅ Use Mutation Instead of Query
+  const { mutate: fetchJobs, data: Jobs, isLoading, error } = useGetArtisanJobsMutation();
+  const { setJobs } = useUserStore();
+
+  useEffect(() => {
+    fetchJobs(); // ✅ Manually trigger the mutation
+  }, [fetchJobs]);
+
+  useEffect(() => {
+    console.log(Jobs,"in home page");
+    if (Jobs?.data) {
+      setJobs(
+        Jobs.data.map((job: any) => ({
+          job_id: job.job_id,
+          job_type: job.job_type,
+          attachments: job.attachments,
+          estimated_duration: job.estimated_duration,
+          location: job.location,
+          minimum_price: job.minimum_price,
+          tags: job.tags,
+          title: job.title,
+          description: job.description,
+          created_at: job.created_at,
+          updated_at: job.updated_at,
+          status: job.status,
+        }))
+      );
+    }
+  }, [Jobs, setJobs]); // ✅ Runs only when `Jobs` changes
+  
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error loading jobs: {error.message}</p>;
 
   return (
     <main>
       <div className="flex justify-between relative">
-        <Sidebar className="w-[180px] mr-8" navigationItems={navigationItems} />
-        <Dashboard className="flex-1 max-w-[820px]">
-          <StatCard 
-            icon="/icons/stats.svg" 
-            count="25" 
-            label="Total Projects" 
-            bgColor="bg-blue-100" 
-          />
-          <ProjectCard 
-            image="/images/project-placeholder.jpg"
-            category="Development"
-            title="Project Title"
-            authorImage="/images/avatars/default.jpg"
-            authorName="John Doe"
-            authorRole="Developer"
-          />
-          <WorkingProject 
-            authorImage="/images/avatars/default.jpg"
-            authorName="John Doe"
-            date="2024-01-16"
-            jobType="Full-time"
-            jobTitle="Software Engineer"
-          />
-        </Dashboard>
-        <Profile className="w-[250px] ml-8" />
+        <Layout height={900} />
+        <div className="w-full flex justify-between">
+          <Dashboard className="flex-1 max-w-[820px]" />
+          <div>
+            <Profile className="w-[250px] ml-8" />
+          </div>
+        </div>
       </div>
     </main>
   );

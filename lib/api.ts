@@ -1,6 +1,14 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from "axios";
 import ToastHandler from "../common/toasthHandler";
+import { useRouter } from "next/navigation";
+const logoutUser = () => {
+  console.log("Logging out user...");
 
+  // Clear JWT cookie
+
+  // Redirect user without useRouter()
+  window.location.href = "/signin"; // ✅ Works without hooks!
+};
 // Extend the AxiosInstance type
 interface CustomAxiosInstance extends AxiosInstance {
   logoutCallback?: () => void;
@@ -34,7 +42,6 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       ToastHandler("error", error.response.data?.message);
 
-      // Perform logout
      logoutUser();
 
       // Trigger navigation callback if set

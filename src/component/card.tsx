@@ -9,7 +9,7 @@ interface CardProps {
     defaultValue: number;
     precision: number;
     readOnly?: boolean;
-    img: StaticImageData;
+    img?: StaticImageData | undefined;
     text:string;
   }
   const Card: React.FC<CardProps> = ({ id, name, work, defaultValue, precision, readOnly = false, img ,text}) => {

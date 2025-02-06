@@ -11,6 +11,7 @@ const api: CustomAxiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+    withCredentials: true, // Add this line
 }) as CustomAxiosInstance;
 
 api.interceptors.response.use(

@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import img2 from '../../../public/images/Subtract.svg';
+import Link from 'next/link';
 interface FreeProps {
   data: boolean;
 }
@@ -40,13 +41,13 @@ const Free: React.FC<FreeProps> = ({ data }) => {
                 onMouseEnter={() => handleArrow(true)}
                 onMouseLeave={() => handleArrow(false)}
               >
-                <div
+                <Link href={'/signup'}
                   className={`${
                     arrow ? '-translate-x-2' : ''
                   } transition-transform duration-300 delay-75`}
                 >
                   Join Us Now
-                </div>
+                </Link>
                 <FontAwesomeIcon
                   icon={faArrowRight}
                   className={`transform transition-transform duration-300 delay-75 ease-in-out ${

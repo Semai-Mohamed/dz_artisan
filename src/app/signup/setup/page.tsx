@@ -11,6 +11,7 @@ import { useUserStore , User } from '../../../../utils/authStore';
 import Link from "next/link"
 import ConditionalRedirect from "@/component/verify"
 import ProgressAuth from "@/component/progressAuth"
+import { useSignUpMutation ,useCompleteProfileMutation, CompleteProfileDto } from "../../../../api/auth"
 const Setup = () => {
   const [email,setEmail] = useState<boolean>(false)
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -93,7 +94,7 @@ const Setup = () => {
     }
   };
 
-  const handleProfile = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleProfile = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     
     if (name === 'username') {
@@ -121,8 +122,19 @@ const Setup = () => {
       [name]: value,
     }));
   };
+  const { mutate: completeProfile, isLoading } = useCompleteProfileMutation(user);
   const handleSubmit = () => {
     if (isValidForm()) {
+      const formData = new FormData();
+      formData.append('username', profile.username);
+      formData.append('bio', profile.about);
+      formData.append('birthday', profile.birthday?.toISOString() || '');
+      formData.append('employment_status', profile.work);
+      
+      if (selectedFile) {
+        formData.append('profile_picture', selectedFile);
+      }
+  
       const newUser = {
         username: profile.username,
         bio: profile.about,
@@ -130,10 +142,14 @@ const Setup = () => {
         employment_status: profile.work,
         profile_picture: profile.image,
       };
+  
       updateMultipleFields(newUser);  
-      console.log(user)
+      completeProfile(formData);
     }
   };
+
+ 
+
   return (
     <div className="w-full flex justify-center items-center h-[700px] font-Poppins">
       <ConditionalRedirect  url="/signUp" verify={verifyKeys}></ConditionalRedirect>
@@ -197,24 +213,24 @@ const Setup = () => {
               <div className="gap-x-6 flex items-center mb-6">
                 <div className="flex items-center gap-x-2">
                   <span 
-                    onClick={() => setProfile(prev => ({ ...prev, work: "Student" }))} 
-                    className={`w-2 h-2 rounded-full outline-offset-2 outline-double outline-1 outline-[rgba(81,93,239,1)] ${profile.work === "Student" ? "bg-[rgba(81,93,239,1)]" : ""}`}
+                    onClick={() => setProfile(prev => ({ ...prev, work: "student" }))} 
+                    className={`w-2 h-2 rounded-full outline-offset-2 outline-double outline-1 outline-[rgba(81,93,239,1)] ${profile.work === "student" ? "bg-[rgba(81,93,239,1)]" : ""}`}
                   />
                   <div className="text-[rgba(114,114,114,0.8)] text-sm font-thin">Student</div>
                 </div>
                 <div className="flex items-center gap-x-2">
                   <span 
-                    onClick={() => setProfile(prev => ({ ...prev, work: "Employed" }))} 
-                    className={`w-2 h-2 rounded-full outline-offset-2 outline-double outline-1 outline-[rgba(81,93,239,1)] ${profile.work === "Employed" ? "bg-[rgba(81,93,239,1)]" : ""}`}
+                    onClick={() => setProfile(prev => ({ ...prev, work: "employed" }))} 
+                    className={`w-2 h-2 rounded-full outline-offset-2 outline-double outline-1 outline-[rgba(81,93,239,1)] ${profile.work === "employed" ? "bg-[rgba(81,93,239,1)]" : ""}`}
                   />
                   <div className="text-[rgba(114,114,114,0.8)] text-sm font-thin">Employed</div>
                 </div>
                 <div className="flex items-center gap-x-2">
                   <span 
-                    onClick={() => setProfile(prev => ({ ...prev, work: "other" }))} 
-                    className={`w-2 h-2 rounded-full outline-offset-2 outline-double outline-1 outline-[rgba(81,93,239,1)] ${profile.work === "i will win" ? "bg-[rgba(81,93,239,1)]" : ""}`}
+                    onClick={() => setProfile(prev => ({ ...prev, work: "freelancer" }))} 
+                    className={`w-2 h-2 rounded-full outline-offset-2 outline-double outline-1 outline-[rgba(81,93,239,1)] ${profile.work === "freelancer" ? "bg-[rgba(81,93,239,1)]" : ""}`}
                   />
-                  <div className="text-[rgba(114,114,114,0.8)] text-sm font-thin">Others</div>
+                  <div className="text-[rgba(114,114,114,0.8)] text-sm font-thin">Freelancer</div>
                 </div>
               </div>
               <div className="text-2xl font-semibold text-[rgba(65,65,65,1)] relative mb-4">Add your Picture</div>
@@ -268,16 +284,15 @@ const Setup = () => {
         </div>
         <div className="w-11/12 flex justify-center gap-y-3 flex-col">
           <label className="text-[rgba(114,114,114,1)]">Tell us about you</label>
-          <input 
-            type="text" 
+          <textarea 
+            
             value={profile.about} 
             onChange={handleProfile} 
             name="about" 
-            className="bg-[rgba(217,217,217,0.23)] border-none outline-none text-[rgba(79,79,79,0.78)] placeholder:text-[rgba(79,79,79,0.48)] pl-5 h-36 rounded-xl w-11/12" />{errors.about && <div className="text-red-500 text-sm">{errors.about}</div>}</div>
+            className="bg-[rgba(217,217,217,0.23)] py-3 border-none outline-none text-[rgba(79,79,79,0.78)] placeholder:text-[rgba(79,79,79,0.48)] pl-5 h-36 rounded-xl w-11/12" />{errors.about && <div className="text-red-500 text-sm">{errors.about}</div>}</div>
       </div>
     </div>
         </div>
-        <ProgressAuth urlArtisan="/signUp/artisan" urlClient="/logIn" skip={true} showModal={showModel} setShowModal={setShowModel} progress={user?.role == "artisan" ? 40 : 100}></ProgressAuth>
 
       </div>)}
 export default Setup

@@ -1,5 +1,6 @@
 import * as React from "react";
 import { ProjectCardProps } from "./types";
+import Image from "next/image";
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({
   avatarSrc,
@@ -10,11 +11,13 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
   return (
     <>
       <div className="flex gap-2 justify-center items-center w-full max-w-[224px]">
-        <img
+        <Image
+          width={30}
+          height={30}
           loading="lazy"
-          src={avatarSrc}
+          src={imageSrc}
           alt={`${name}'s avatar`}
-          className="object-contain shrink-0 self-stretch my-auto w-6 aspect-square"
+          className="object-contain shrink-0 self-stretch my-auto w-6 aspect-square rounded-full"
         />
         <div className="flex flex-col flex-1 shrink self-stretch my-auto basis-4">
           <div className="text-xs font-medium text-neutral-800">{name}</div>
@@ -27,12 +30,9 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
           see
         </button>
       </div>
-      <img
-        loading="lazy"
-        src={imageSrc}
-        alt={`Project by ${name}`}
-        className="object-contain self-stretch mt-4 w-full"
-      />
+      <div className="h-10 w-auto rounded-full overflow-hidden flex items-center justify-center">
+      
+      </div>
     </>
   );
 };

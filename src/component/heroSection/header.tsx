@@ -47,8 +47,8 @@ const Header: React.FC<HeaderProps> = ({ setData }) => {
      </div>
      <div className='flex justify-center items-center flex-1'>
        <div className='flex justify-evenly items-center text-sm  w-3/5 '>
-       <Link href={'/logIn'} className={`py-2 px-4 border-2 rounded-xl   !bg-transparent cursor-pointer relative hover:-translate-y-1 hover:shadow-shadowSofi   transition-transform delay-100 ease-in-out duration-500  ${selected_dev == 'div_1'? 'border-greenBorderSofi2 text-greenSofic':'border-blueSofic text-blueSofic'} `}>Log in</Link>
-       <Link href={'/signUp'} className={`py-2 px-4 border-2 rounded-xl  text-white font-medium cursor-pointer relative hover:-translate-y-1 hover:shadow-shadowSofi  transition-transform delay-100 duration-500 ease-in-out ${selected_dev == 'div_1' ? 'bg-greenSofiB border-greenBorderSofi bg-greenSofic':'bg-blueSofic border-blueSofic'}`}>Sign up</Link>
+       <Link href={'/signin'} className={`py-2 px-4 border-2 rounded-xl   !bg-transparent cursor-pointer relative hover:-translate-y-1 hover:shadow-shadowSofi   transition-transform delay-100 ease-in-out duration-500  ${selected_dev == 'div_1'? 'border-greenBorderSofi2 text-greenSofic':'border-blueSofic text-blueSofic'} `}>Log in</Link>
+       <Link href={'/signup'} className={`py-2 px-4 border-2 rounded-xl  text-white font-medium cursor-pointer relative hover:-translate-y-1 hover:shadow-shadowSofi  transition-transform delay-100 duration-500 ease-in-out ${selected_dev == 'div_1' ? 'bg-greenSofiB border-greenBorderSofi bg-greenSofic':'bg-blueSofic border-blueSofic'}`}>Sign up</Link>
        </div>
      </div>
    </div>

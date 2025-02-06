@@ -6,12 +6,19 @@ export interface StatCardProps {
 }
 
 export interface ProjectCardProps {
-  image: string;
-  category: string;
+  job_id?: string;
+  attachments?: string[];
   title: string;
-  authorImage: string;
-  authorName: string;
-  authorRole: string;
+  description: string;
+  minimum_price?: number;
+  location?: string;
+  createdAt: string;
+  status: string;
+  tags : string[];
+  job_type: string;
+  estimated_duration : string;
+  localtion : string;
+  created_at:Date
 }
 
 export interface WorkingProjectProps {

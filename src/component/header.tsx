@@ -1,21 +1,24 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import img6 from '../../public/images/direct-inbox.svg'
 import img from '../../public/images/Icon Strategy.svg'
 import searchIcon from '../../public/images/search-normal.svg' 
+import { useProfileMutation } from '../../api/artisanApi'
+import Link from 'next/link'
+import { useUserStore } from '../../utils/authStore'
 
 const headerData = {
   searchPlaceholder: "Search...",
   searchButtonText: "Search",
   user: {
-    username: "@spoki",
-    fullName: "iyed hamoudi",
-    profileImage: img,
     settingsIcon: img6
   }
 };
 
-const Header = () => {
+
+const Header = () => { 
+    const { user, setUser } = useUserStore();
+  
   return (
     <div className='w-full py-4'>
       <div className='flex items-center mx-auto gap-x-4'>
@@ -34,7 +37,7 @@ const Header = () => {
               className='absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500'
             />
           </div>
-          <button className="bg-[rgba(32,32,32,1)] py-3 px-12 font-thin text-xs text-white rounded-lg">
+          <button  className="bg-[rgba(32,32,32,1)] py-3 px-12 font-thin text-xs text-white rounded-lg">
             {headerData.searchButtonText}
           </button>       
         </div>
@@ -46,17 +49,19 @@ const Header = () => {
             src={headerData.user.settingsIcon}
           ></Image>
           
-          <div className='flex space-x-3'>
+          <Link href={'/profile'} className='flex space-x-3 cursor-pointer'>
             <div className=''>
-              <div className='text-sm '>{headerData.user.username}</div>
-              <div className='text-xs text-gray-500'>{headerData.user.fullName}</div>
+              <div className='text-sm '>{user?.lastname}</div>
+              <div className='text-xs text-gray-500'>{user?.full_name}</div>
             </div>
             <Image 
-              className='rounded-full h-10 w-10 object-cover' 
-              alt='Profile' 
-              src={headerData.user.profileImage}
-            ></Image>
-          </div>
+  className='rounded-full h-10 w-10 object-cover' 
+  alt='Profile' 
+  src={user?.profile_picture || "/placeholder.svg?height=40&width=40"}
+  width={40}
+  height={40}
+/>
+          </Link>
         </div>
       </div>
     </div>
