@@ -16,7 +16,7 @@ interface CustomAxiosInstance extends AxiosInstance {
 }
 
 const api: CustomAxiosInstance = axios.create({
-  baseURL: "https://server.yxne.tech",
+  baseURL: "http://localhost:3000",
   //baseURL: "https://gb4dv9jc-3000.euw.devtunnels.ms",
   validateStatus: (status) => status == 200 || status == 201,
   headers: {

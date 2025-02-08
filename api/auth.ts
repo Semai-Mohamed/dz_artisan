@@ -120,7 +120,7 @@ export const postJobDetails = async (jobDetails: JobDetailsDto) => {
       return useMutation({
         mutationFn: () => Signin(form), 
         onSuccess: async (data : any) => {
-          router.replace("/artist");
+          router.replace("/");
         },
         onError: (error: any) => {
           console.log(error.response.data);
@@ -161,7 +161,7 @@ export const postJobDetails = async (jobDetails: JobDetailsDto) => {
         mutationFn: (form: FormData) => completeProfile(form),
         onSuccess: async (data: any) => {
           ToastHandler("success", "Profile completed successfully!");
-          router.replace(`/${user?.role === "artisan" ? "signup/artisan" : "home"}`);
+          router.replace(`/${user?.role === "artisan" ? "signup/artisan" : "signup/artisan"}`);
         },
         onError: (error: any) => {
           ToastHandler("error", error.response?.data.message || "Failed to complete profile");
@@ -183,7 +183,12 @@ export const postJobDetails = async (jobDetails: JobDetailsDto) => {
           if (error.response?.data?.message === "JWT cookie not found") {
             ToastHandler("error", "Session expired, please log in again.");
             router.replace("/signin");
-          } 
+          } else {
+            ToastHandler(
+              "error",
+              error.response?.data.message || "Failed to submit projects"
+            );
+          }
         },
       });
     };
